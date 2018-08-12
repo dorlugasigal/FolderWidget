@@ -30,13 +30,13 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.tblMain = new System.Windows.Forms.TableLayoutPanel();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.topPanel = new System.Windows.Forms.Panel();
             this.lblFileName = new System.Windows.Forms.Label();
             this.btnClose = new System.Windows.Forms.Button();
             this.btnDeployToProd = new System.Windows.Forms.Button();
             this.tblIcons = new System.Windows.Forms.TableLayoutPanel();
             this.tblMain.SuspendLayout();
-            this.panel1.SuspendLayout();
+            this.topPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // tblMain
@@ -45,7 +45,7 @@
             this.tblMain.BackColor = System.Drawing.Color.Transparent;
             this.tblMain.ColumnCount = 1;
             this.tblMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tblMain.Controls.Add(this.panel1, 0, 0);
+            this.tblMain.Controls.Add(this.topPanel, 0, 0);
             this.tblMain.Controls.Add(this.btnDeployToProd, 0, 2);
             this.tblMain.Controls.Add(this.tblIcons, 0, 1);
             this.tblMain.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -61,25 +61,27 @@
             this.tblMain.DragDrop += new System.Windows.Forms.DragEventHandler(this.DragDropForm);
             this.tblMain.DragEnter += new System.Windows.Forms.DragEventHandler(this.DragEnterForm);
             // 
-            // panel1
+            // topPanel
             // 
-            this.panel1.AllowDrop = true;
-            this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(172)))), ((int)(((byte)(242)))));
-            this.panel1.Controls.Add(this.lblFileName);
-            this.panel1.Controls.Add(this.btnClose);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Margin = new System.Windows.Forms.Padding(0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(150, 30);
-            this.panel1.TabIndex = 2;
-            this.panel1.DragDrop += new System.Windows.Forms.DragEventHandler(this.DragDropForm);
-            this.panel1.DragEnter += new System.Windows.Forms.DragEventHandler(this.DragEnterForm);
-            this.panel1.DoubleClick += new System.EventHandler(this.lblFileName_DoubleClick);
-            this.panel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseDown);
+            this.topPanel.AllowDrop = true;
+            this.topPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(130)))), ((int)(((byte)(172)))), ((int)(((byte)(242)))));
+            this.topPanel.Controls.Add(this.lblFileName);
+            this.topPanel.Controls.Add(this.btnClose);
+            this.topPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.topPanel.Location = new System.Drawing.Point(0, 0);
+            this.topPanel.Margin = new System.Windows.Forms.Padding(0);
+            this.topPanel.Name = "topPanel";
+            this.topPanel.Size = new System.Drawing.Size(150, 30);
+            this.topPanel.TabIndex = 2;
+            this.topPanel.DragDrop += new System.Windows.Forms.DragEventHandler(this.DragDropForm);
+            this.topPanel.DragEnter += new System.Windows.Forms.DragEventHandler(this.DragEnterForm);
+            this.topPanel.DoubleClick += new System.EventHandler(this.lblFileName_DoubleClick);
+            this.topPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseDown);
             // 
             // lblFileName
             // 
+            this.lblFileName.AllowDrop = true;
+            this.lblFileName.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.lblFileName.AutoSize = true;
             this.lblFileName.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
             this.lblFileName.ForeColor = System.Drawing.SystemColors.Control;
@@ -114,6 +116,7 @@
             // 
             // btnDeployToProd
             // 
+            this.btnDeployToProd.AllowDrop = true;
             this.btnDeployToProd.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
             this.btnDeployToProd.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnDeployToProd.FlatAppearance.BorderSize = 0;
@@ -128,6 +131,7 @@
             this.btnDeployToProd.TabStop = false;
             this.btnDeployToProd.Text = "Production";
             this.btnDeployToProd.UseVisualStyleBackColor = false;
+            this.btnDeployToProd.Visible = false;
             this.btnDeployToProd.Click += new System.EventHandler(this.btnDeployToProd_Click);
             // 
             // tblIcons
@@ -164,8 +168,8 @@
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.DragDropForm);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.DragEnterForm);
             this.tblMain.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
+            this.topPanel.ResumeLayout(false);
+            this.topPanel.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -173,7 +177,7 @@
         #endregion
 
         private System.Windows.Forms.TableLayoutPanel tblMain;
-        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel topPanel;
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.Button btnDeployToProd;
         private System.Windows.Forms.TableLayoutPanel tblIcons;

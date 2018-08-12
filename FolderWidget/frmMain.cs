@@ -47,6 +47,11 @@ namespace FolderWidget
         private NotifyIcon m_notifyIcon;
         private MenuItem m_menuItemExit;
         private MenuItem m_menuItemRefresh;
+        private MenuItem m_menuItemDarkTheme;
+
+        Color A;
+        Color B;
+
         int m_height;
         DataTable m_iconsData;
         #endregion
@@ -57,11 +62,14 @@ namespace FolderWidget
             clsManageComunication.OnSendMessage += ClsManageComunication_OnSendMessage;
             this.Location = new Point(Screen.PrimaryScreen.Bounds.Right - this.Width, Screen.PrimaryScreen.Bounds.Top + 30);
 
+            A = Color.FromArgb(227, 228, 230);
+            B = Color.FromArgb(184, 222, 255);
+            btnClose.FlatAppearance.BorderColor = Color.FromArgb(0, 255, 255, 255); //transparent
+
             AddDeployToProdButton();
 
             InitFormFilesAndButtons();
             SetNotifyIconAndContextMenu();
-
         }
 
 
@@ -69,11 +77,24 @@ namespace FolderWidget
         #region Form Display Handling
         private void AddDeployToProdButton()
         {
+
             try
             {
-                System.Security.AccessControl.DirectorySecurity ds = Directory.GetAccessControl(ConfigurationManager.AppSettings["deployToProdPath"]);
-                m_height = 110;
-                btnDeployToProd.Visible = true;
+                if (ConfigurationManager.AppSettings["DeveloperMode"] == "1")
+                {
+                    System.Security.AccessControl.DirectorySecurity ds = Directory.GetAccessControl(ConfigurationManager.AppSettings["deployToProdPath"]);
+                    m_height = 110;
+                    btnDeployToProd.Visible = true;
+                }
+                else
+                {
+                    m_height = 80;
+                    if (tblMain.RowCount == 3)
+                    {
+                        tblMain.RowCount = 2;
+                    }
+                    btnDeployToProd.Visible = false;
+                }
             }
             catch (UnauthorizedAccessException)
             {
@@ -92,9 +113,39 @@ namespace FolderWidget
 
         protected override void OnPaintBackground(PaintEventArgs e)
         {
-            using (LinearGradientBrush brush = new LinearGradientBrush(this.ClientRectangle, Color.FromArgb(227, 228, 230), Color.FromArgb(184, 222, 255), 90F))
+            
+            using (LinearGradientBrush brush = new LinearGradientBrush(this.ClientRectangle, A, B, 90F))
             {
                 e.Graphics.FillRectangle(brush, this.ClientRectangle);
+            }
+        }
+
+        private void ChangeTheme()
+        {
+           
+            if (m_menuItemDarkTheme.Checked)
+            {    
+                A = Color.FromArgb(96, 96, 96);
+                B = Color.FromArgb(45, 45, 45);
+
+                topPanel.BackColor = Color.FromArgb(49, 49, 49);
+
+                btnClose.BackColor = Color.FromArgb(49, 49, 49);
+
+                btnDeployToProd.ForeColor = Color.Black;
+                btnDeployToProd.BackColor = Color.FromArgb(255, 204, 0);
+            }
+            else
+            {
+                A = Color.FromArgb(227, 228, 230);
+                B = Color.FromArgb(184, 222, 255);
+
+                topPanel.BackColor = Color.FromArgb(130, 172, 242);
+                
+                btnClose.BackColor = Color.FromArgb(130, 172, 242);
+
+                btnDeployToProd.BackColor = Color.FromArgb(128, 128, 255);
+                btnDeployToProd.ForeColor = Color.White;
             }
         }
         private void SetNotifyIconAndContextMenu()
@@ -103,16 +154,22 @@ namespace FolderWidget
             this.ContextMenu = new ContextMenu();
             this.m_menuItemExit = new MenuItem();
             this.m_menuItemRefresh = new MenuItem();
+            this.m_menuItemDarkTheme = new MenuItem();
 
-            this.ContextMenu.MenuItems.AddRange(new MenuItem[] { m_menuItemExit, m_menuItemRefresh });
+            this.ContextMenu.MenuItems.AddRange(new MenuItem[] { m_menuItemExit, m_menuItemRefresh, m_menuItemDarkTheme });
 
             m_menuItemRefresh.Index = 0;
             m_menuItemRefresh.Text = "&Refresh";
             m_menuItemRefresh.Click += M_menuItemRefresh_Click;
 
-            m_menuItemExit.Index = 1;
+            m_menuItemDarkTheme.Index = 1;
+            m_menuItemDarkTheme.Text = "&Dark";
+            m_menuItemDarkTheme.Click += M_menuItemDarkTheme_Click; ;
+
+            m_menuItemExit.Index = 2;
             m_menuItemExit.Text = "E&xit";
             m_menuItemExit.Click += m_menuItemExit_Click;
+
 
             m_notifyIcon = new NotifyIcon(this.components);
             m_notifyIcon.Icon = this.Icon;
@@ -122,7 +179,12 @@ namespace FolderWidget
             m_notifyIcon.Click += M_notifyIcon_Click;
         }
 
-
+        private void M_menuItemDarkTheme_Click(object sender, EventArgs e)
+        {
+            m_menuItemDarkTheme.Checked = m_menuItemDarkTheme.Checked == true ? false : true;
+            ChangeTheme();
+            InitFormFilesAndButtons();
+        }
 
         private void ClsManageComunication_OnSendMessage(string Message)
         {
@@ -208,6 +270,7 @@ namespace FolderWidget
         }
         private void InitFormFilesAndButtons()
         {
+            ClearData();
             m_iconsData = clsFileManager.GetInitData();
 
             this.Height = m_height + (50 * ((int)m_iconsData.Rows.Count / 3));
@@ -313,6 +376,7 @@ namespace FolderWidget
 
             cm.MenuItems.Add("Run as Different User");
             cm.MenuItems[2].Click += StartProcessAsDifferentUser;
+            btn.ContextMenu = cm;
             #endregion
 
             #region Button Image and ToolTip
@@ -565,6 +629,7 @@ namespace FolderWidget
             foreach (string file in fileList)
             {
                 string sourcePath = clsFileManager.GetShortcutTargetFile(file);
+                sourcePath = string.IsNullOrEmpty(Path.GetExtension(sourcePath)) ? file : sourcePath;
                 if (!string.IsNullOrEmpty(sourcePath))
                 {
                     finalList.Add(sourcePath);
@@ -646,7 +711,7 @@ namespace FolderWidget
                 filesString = filesString + "• " + Path.GetFileName(fileToDeploy.ToString()) + Environment.NewLine;
             }
             this.Visible = false;
-            if(MessageBox.Show("Are you sure you want to deploy these files:" + filesString,"FolderWidget", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show("Are you sure you want to deploy these files:" + filesString, "FolderWidget", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 try
                 {
