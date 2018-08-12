@@ -93,6 +93,16 @@ namespace FolderWidget.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Layers {
+            get {
+                object obj = ResourceManager.GetObject("Layers", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Other {
             get {
                 object obj = ResourceManager.GetObject("Other", resourceCulture);

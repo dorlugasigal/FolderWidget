@@ -49,8 +49,9 @@ namespace FolderWidget
         private MenuItem m_menuItemRefresh;
         private MenuItem m_menuItemDarkTheme;
 
-        Color A;
-        Color B;
+        Color backgroundA;
+        Color backgroundB;
+        Color btnHover;
 
         int m_height;
         DataTable m_iconsData;
@@ -62,9 +63,14 @@ namespace FolderWidget
             clsManageComunication.OnSendMessage += ClsManageComunication_OnSendMessage;
             this.Location = new Point(Screen.PrimaryScreen.Bounds.Right - this.Width, Screen.PrimaryScreen.Bounds.Top + 30);
 
-            A = Color.FromArgb(227, 228, 230);
-            B = Color.FromArgb(184, 222, 255);
+            backgroundA = Color.FromArgb(227, 228, 230);
+            backgroundB = Color.FromArgb(184, 222, 255);
+            btnHover = Color.FromArgb(213, 238, 255);
             btnClose.FlatAppearance.BorderColor = Color.FromArgb(0, 255, 255, 255); //transparent
+            btnDeployToProd.FlatAppearance.BorderColor = Color.FromArgb(0, 255, 255, 255); //transparent
+
+            Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+            key.SetValue("FolderWidget", @"C:\Projects\FolderWidget\FolderWidget\bin\Debug\FolderWidget.exe");
 
             AddDeployToProdButton();
 
@@ -113,8 +119,8 @@ namespace FolderWidget
 
         protected override void OnPaintBackground(PaintEventArgs e)
         {
-            
-            using (LinearGradientBrush brush = new LinearGradientBrush(this.ClientRectangle, A, B, 90F))
+
+            using (LinearGradientBrush brush = new LinearGradientBrush(this.ClientRectangle, backgroundA, backgroundB, 90F))
             {
                 e.Graphics.FillRectangle(brush, this.ClientRectangle);
             }
@@ -122,11 +128,11 @@ namespace FolderWidget
 
         private void ChangeTheme()
         {
-           
+
             if (m_menuItemDarkTheme.Checked)
-            {    
-                A = Color.FromArgb(96, 96, 96);
-                B = Color.FromArgb(45, 45, 45);
+            {
+                backgroundA = Color.FromArgb(96, 96, 96);
+                backgroundB = Color.FromArgb(45, 45, 45);
 
                 topPanel.BackColor = Color.FromArgb(49, 49, 49);
 
@@ -134,14 +140,18 @@ namespace FolderWidget
 
                 btnDeployToProd.ForeColor = Color.Black;
                 btnDeployToProd.BackColor = Color.FromArgb(255, 204, 0);
+                btnHover = Color.FromArgb(112, 112, 112);
+
+
             }
             else
             {
-                A = Color.FromArgb(227, 228, 230);
-                B = Color.FromArgb(184, 222, 255);
+                btnHover = Color.FromArgb(213, 238, 255);
+                backgroundA = Color.FromArgb(227, 228, 230);
+                backgroundB = Color.FromArgb(184, 222, 255);
 
                 topPanel.BackColor = Color.FromArgb(130, 172, 242);
-                
+
                 btnClose.BackColor = Color.FromArgb(130, 172, 242);
 
                 btnDeployToProd.BackColor = Color.FromArgb(128, 128, 255);
@@ -222,6 +232,8 @@ namespace FolderWidget
 
         private void Btn_MouseLeave(object sender, EventArgs e)
         {
+            ((Button)sender).BackColor = Color.Transparent;
+
             if (!lblFileName.Text.Equals("Drag something"))
             {
                 lblFileName.Text = string.Empty;
@@ -229,6 +241,7 @@ namespace FolderWidget
         }
         private void Btn_MouseHover(object sender, EventArgs e)
         {
+            ((Button)sender).BackColor = btnHover;
             string paths = ((Button)sender).Tag.ToString();
             string[] parsedPaths = paths.Split(',');
             string title = string.Empty;
@@ -241,14 +254,8 @@ namespace FolderWidget
                 lblFileName.Text = title;
                 return;
             }
-            foreach (var path in parsedPaths)
-            {
-                title = title + Path.GetFileNameWithoutExtension(path) + ',';
-            }
-            if (title.Length > 0)
-            {
-                title = title.Remove(title.Length - 2);
-            }
+
+            title = Path.GetFileNameWithoutExtension(paths);
             lblFileName.Text = title;
         }
 
@@ -471,7 +478,7 @@ namespace FolderWidget
             using (OpenFileDialog dlg = new OpenFileDialog())
             {
                 dlg.Title = "Open Image";
-                dlg.Filter = "Image files (*.jpg, *.jpeg, *.jpe, *.jfif, *.png, *.ico) | *.jpg; *.jpeg; *.jpe; *.jfif; *.png, *.ico";
+                dlg.Filter = "Image files (*.jpg, *.jpeg, *.jpe, *.jfif, *.png, *.ico, *.bmp) | *.jpg; *.jpeg; *.jpe; *.jfif; *.png; *.ico;*.bmp";
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
                     Image img = null;
@@ -511,14 +518,14 @@ namespace FolderWidget
                 icon = Resources.folder;
                 if (dr["Path"].ToString().Split(',').Count() > 1)
                 {
-                    icon = Resources.folders;
+                    icon = Resources.Layers;
                 }
             }
             else
             {
                 if (dr["Path"].ToString().Split(',').Count() > 1)
                 {
-                    icon = Resources.folders;
+                    icon = Resources.Layers;
                 }
                 else
                 {
