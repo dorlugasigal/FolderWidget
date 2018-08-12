@@ -9,3 +9,5 @@ C:\Dor\FolderWidget\FolderWidget\obj\Debug\Interop.Shell32.dll
 C:\Dor\FolderWidget\FolderWidget\obj\Debug\FolderWidget.csproj.ResolveComReference.cache
 C:\Dor\FolderWidget\FolderWidget\obj\Debug\FolderWidget.exe
 C:\Dor\FolderWidget\FolderWidget\obj\Debug\FolderWidget.pdb
+C:\Dor\FolderWidget\FolderWidget\obj\Debug\FolderWidget.frmMain.resources
+C:\Dor\FolderWidget\FolderWidget\obj\Debug\FolderWidget.frmRunAsDifferentUser.resources

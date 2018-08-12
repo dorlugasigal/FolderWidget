@@ -14,7 +14,6 @@ namespace FolderWidget
 {
     static class clsFileManager
     {
-
         static public bool CreateIfDoesntExists()
         {
             CreateFolder();
@@ -93,7 +92,6 @@ namespace FolderWidget
             {
                 string pathOnly = Path.GetDirectoryName(shortcutFilename);
                 string fileNameOnly = Path.GetFileName(shortcutFilename);
-
                 Shell shell = new Shell();
                 Folder folder = shell.NameSpace(pathOnly);
                 FolderItem folderItem = folder.ParseName(fileNameOnly);
@@ -123,7 +121,7 @@ namespace FolderWidget
                 {
                     dt.WriteXmlSchema(ConfigurationManager.AppSettings["mainPath"]);
                 }
-                WriteError("Xml file updated",ConfigurationManager.AppSettings["mainPath"]);
+                WriteError("Xml file updated", ConfigurationManager.AppSettings["mainPath"]);
                 File.SetAttributes(ConfigurationManager.AppSettings["mainPath"], File.GetAttributes(ConfigurationManager.AppSettings["mainPath"]) | FileAttributes.Hidden);
             }
             catch (Exception ex)
@@ -131,9 +129,7 @@ namespace FolderWidget
                 WriteError("ReplaceXMLFile: " + ex.Message, ex.StackTrace);
             }
         }
-
-
-        static public int SaveIcon(ref DataTable dt,Image icon)
+        static public int SaveIcon(ref DataTable dt, Image icon)
         {
             try
             {
@@ -160,38 +156,50 @@ namespace FolderWidget
                 return -1;
             }
         }
+        static public bool IsPathDirectory(string path)
+        {
+            try
+            {
+                FileAttributes attr = File.GetAttributes(path);
+                if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                WriteError("IsPathDirectory: " + ex.Message, ex.StackTrace);
+                return false;
+            }
+        }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        internal static void DeleteIcon(string ico)
+        {
+            try
+            {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                File.Delete(ConfigurationManager.AppSettings["iconPath"] + ico + ".png");
+                WriteError("Deleted Icon: ", ConfigurationManager.AppSettings["iconPath"] + ico + ".png");
+            }
+            catch (Exception ex)
+            {
+                WriteError("DeleteIcon: " + ex.Message, ex.StackTrace);
+            }
+        }
         public static void WriteError(string message, string stackTrace)
         {
             try
             {
                 string msg = Environment.NewLine + DateTime.Now.ToString() + Environment.NewLine + "Message: " + message + Environment.NewLine + "StackTrace: " + stackTrace + Environment.NewLine + Environment.NewLine + "───────────────────────────────────────────────────────────────────────────────────────────" + Environment.NewLine;
                 File.AppendAllText(ConfigurationManager.AppSettings["errorPath"], msg);
-                if ((File.GetAttributes(ConfigurationManager.AppSettings["mainPath"]) & FileAttributes.Hidden) != FileAttributes.Hidden)
+                if ((File.GetAttributes(ConfigurationManager.AppSettings["errorPath"]) & FileAttributes.Hidden) != FileAttributes.Hidden)
                 {
-                    File.SetAttributes(ConfigurationManager.AppSettings["mainPath"], File.GetAttributes(ConfigurationManager.AppSettings["mainPath"]) | FileAttributes.Hidden);
+                    File.SetAttributes(ConfigurationManager.AppSettings["errorPath"], File.GetAttributes(ConfigurationManager.AppSettings["errorPath"]) | FileAttributes.Hidden);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 MessageBox.Show("התרחשה שגיאה לא צפויה", "התרחשה שגיאה לא צפויה", MessageBoxButtons.OK);
             }
