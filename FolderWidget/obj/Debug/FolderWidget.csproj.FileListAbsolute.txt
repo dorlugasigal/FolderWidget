@@ -1,0 +1,11 @@
+C:\Dor\FolderWidget\FolderWidget\obj\Debug\FolderWidget.csprojAssemblyReference.cache
+C:\Dor\FolderWidget\FolderWidget\obj\Debug\FolderWidget.Properties.Resources.resources
+C:\Dor\FolderWidget\FolderWidget\obj\Debug\FolderWidget.csproj.GenerateResource.cache
+C:\Dor\FolderWidget\FolderWidget\obj\Debug\FolderWidget.csproj.CoreCompileInputs.cache
+C:\Dor\FolderWidget\FolderWidget\bin\Debug\FolderWidget.exe.config
+C:\Dor\FolderWidget\FolderWidget\bin\Debug\FolderWidget.exe
+C:\Dor\FolderWidget\FolderWidget\bin\Debug\FolderWidget.pdb
+C:\Dor\FolderWidget\FolderWidget\obj\Debug\Interop.Shell32.dll
+C:\Dor\FolderWidget\FolderWidget\obj\Debug\FolderWidget.csproj.ResolveComReference.cache
+C:\Dor\FolderWidget\FolderWidget\obj\Debug\FolderWidget.exe
+C:\Dor\FolderWidget\FolderWidget\obj\Debug\FolderWidget.pdb
