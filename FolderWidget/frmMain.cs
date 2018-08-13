@@ -206,7 +206,11 @@ namespace FolderWidget
         }
         private void M_notifyIcon_Click(object sender, EventArgs e)
         {
-            this.Location = new Point(Screen.PrimaryScreen.Bounds.Right - 300, Screen.PrimaryScreen.Bounds.Bottom -200);
+
+            Rectangle workingArea = Screen.GetWorkingArea(this); //bottom right screen
+            this.Location = new Point(workingArea.Right - Size.Width,
+                                      workingArea.Bottom - Size.Height);
+            //this.Location = new Point(Screen.PrimaryScreen.Bounds.Right - 300, Screen.PrimaryScreen.Bounds.Bottom -200);
             ShowAgain();
         }
 
