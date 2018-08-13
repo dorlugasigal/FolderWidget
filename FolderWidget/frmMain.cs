@@ -206,6 +206,7 @@ namespace FolderWidget
         }
         private void M_notifyIcon_Click(object sender, EventArgs e)
         {
+            this.Location = new Point(Screen.PrimaryScreen.Bounds.Right - 300, Screen.PrimaryScreen.Bounds.Bottom -200);
             ShowAgain();
         }
 
@@ -274,6 +275,8 @@ namespace FolderWidget
         {
             tblIcons.Controls.Clear();
             tblIcons.RowStyles.Clear();
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
         }
         private void InitFormFilesAndButtons()
         {
