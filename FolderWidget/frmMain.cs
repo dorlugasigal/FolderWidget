@@ -53,6 +53,8 @@ namespace FolderWidget
         Color backgroundB;
         Color btnHover;
 
+        private KeyHandler ghk;
+
         int m_height;
         DataTable m_iconsData;
         #endregion
@@ -76,6 +78,9 @@ namespace FolderWidget
 
             InitFormFilesAndButtons();
             SetNotifyIconAndContextMenu();
+
+            ghk = new KeyHandler(Keys.F8, this);
+            ghk.Register();
         }
 
 
@@ -746,11 +751,24 @@ namespace FolderWidget
 
         #endregion
 
+        #region KeyHooksFunctions
+        private void HandleHotkey()
+        {
+            this.Visible = !this.Visible;
+        }
 
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == Constants.WM_HOTKEY_MSG_ID)
+                HandleHotkey();
+            base.WndProc(ref m);
+        }
+        #endregion
 
         private void btnClose_Click(object sender, EventArgs e)
         {
             this.Hide();
         }
     }
+
 }

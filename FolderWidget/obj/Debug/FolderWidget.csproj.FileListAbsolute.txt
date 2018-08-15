@@ -11,10 +11,7 @@ C:\Dor\FolderWidget\FolderWidget\obj\Debug\FolderWidget.exe
 C:\Dor\FolderWidget\FolderWidget\obj\Debug\FolderWidget.pdb
 C:\Dor\FolderWidget\FolderWidget\obj\Debug\FolderWidget.frmMain.resources
 C:\Dor\FolderWidget\FolderWidget\obj\Debug\FolderWidget.frmRunAsDifferentUser.resources
-C:\Projects\FolderWidget\FolderWidget\bin\Debug\FolderWidget.exe.config
 C:\Projects\FolderWidget\FolderWidget\bin\Debug\FolderWidget.exe
-C:\Projects\FolderWidget\FolderWidget\bin\Debug\FolderWidget.pdb
-C:\Projects\FolderWidget\FolderWidget\obj\Debug\FolderWidget.csprojAssemblyReference.cache
 C:\Projects\FolderWidget\FolderWidget\obj\Debug\Interop.Shell32.dll
 C:\Projects\FolderWidget\FolderWidget\obj\Debug\FolderWidget.csproj.ResolveComReference.cache
 C:\Projects\FolderWidget\FolderWidget\obj\Debug\FolderWidget.frmMain.resources
@@ -22,5 +19,7 @@ C:\Projects\FolderWidget\FolderWidget\obj\Debug\FolderWidget.frmRunAsDifferentUs
 C:\Projects\FolderWidget\FolderWidget\obj\Debug\FolderWidget.Properties.Resources.resources
 C:\Projects\FolderWidget\FolderWidget\obj\Debug\FolderWidget.csproj.GenerateResource.cache
 C:\Projects\FolderWidget\FolderWidget\obj\Debug\FolderWidget.csproj.CoreCompileInputs.cache
+C:\Projects\FolderWidget\FolderWidget\bin\Debug\FolderWidget.exe.config
 C:\Projects\FolderWidget\FolderWidget\obj\Debug\FolderWidget.exe
 C:\Projects\FolderWidget\FolderWidget\obj\Debug\FolderWidget.pdb
+C:\Projects\FolderWidget\FolderWidget\bin\Debug\FolderWidget.pdb
