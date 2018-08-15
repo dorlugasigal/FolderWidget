@@ -23,3 +23,4 @@ C:\Projects\FolderWidget\FolderWidget\bin\Debug\FolderWidget.exe.config
 C:\Projects\FolderWidget\FolderWidget\obj\Debug\FolderWidget.exe
 C:\Projects\FolderWidget\FolderWidget\obj\Debug\FolderWidget.pdb
 C:\Projects\FolderWidget\FolderWidget\bin\Debug\FolderWidget.pdb
+C:\Projects\FolderWidget\FolderWidget\obj\Debug\FolderWidget.csprojAssemblyReference.cache
