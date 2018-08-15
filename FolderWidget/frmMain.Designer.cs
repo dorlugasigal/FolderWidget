@@ -165,6 +165,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "FolderWidget";
+            this.Load += new System.EventHandler(this.frmMain_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.DragDropForm);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.DragEnterForm);
             this.tblMain.ResumeLayout(false);

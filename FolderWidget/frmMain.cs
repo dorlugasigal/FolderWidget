@@ -21,18 +21,12 @@ namespace FolderWidget
     public partial class frmMain : Form
     {
         #region Properties
-        #region Properties for dragging form with mouse
-        public const int WM_NCLBUTTONDOWN = 0xA1;
-        public const int HT_CAPTION = 0x2;
-
         [System.Runtime.InteropServices.DllImportAttribute("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
         [System.Runtime.InteropServices.DllImportAttribute("user32.dll")]
         public static extern bool ReleaseCapture();
 
-        #endregion
         #region Properties for round form edges
-
         [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
         private static extern IntPtr CreateRoundRectRgn
         (
@@ -44,10 +38,14 @@ namespace FolderWidget
             int nHeightEllipse // width of ellipse
          );
         #endregion
+
+
         private NotifyIcon m_notifyIcon;
         private MenuItem m_menuItemExit;
         private MenuItem m_menuItemRefresh;
         private MenuItem m_menuItemDarkTheme;
+
+        DataTable m_iconsData;
 
         Color backgroundA;
         Color backgroundB;
@@ -56,36 +54,60 @@ namespace FolderWidget
         private KeyHandler ghk;
 
         int m_height;
-        DataTable m_iconsData;
         #endregion
 
         public frmMain()
         {
             InitializeComponent();
             clsManageComunication.OnSendMessage += ClsManageComunication_OnSendMessage;
-            this.Location = new Point(Screen.PrimaryScreen.Bounds.Right - this.Width, Screen.PrimaryScreen.Bounds.Top + 30);
 
+        }
+        private void frmMain_Load(object sender, EventArgs e)
+        {
+            Rectangle workingArea = Screen.GetWorkingArea(this);
+            this.Location = new Point(workingArea.Right - Size.Width, workingArea.Bottom - Size.Height);
+            ghk = new KeyHandler(Keys.F8, this);
+            ghk.Register();
+
+            ColorsSet();
+            SetAsStartup();
+            AddDeployToProdButton();
+            InitFormFilesAndButtons();
+            SetNotifyIconAndContextMenu();
+            ChangeTheme();
+        }
+
+
+        #region Form Display Handling
+        private void ClsManageComunication_OnSendMessage(string Message)
+        {
+            this.Invoke((Action)(() =>
+            {
+                ShowAgain();
+            }));
+
+        }
+        protected override void OnPaintBackground(PaintEventArgs e)
+        {
+
+            using (LinearGradientBrush brush = new LinearGradientBrush(this.ClientRectangle, backgroundA, backgroundB, 90F))
+            {
+                e.Graphics.FillRectangle(brush, this.ClientRectangle);
+            }
+        }
+        private void ColorsSet()
+        {
             backgroundA = Color.FromArgb(227, 228, 230);
             backgroundB = Color.FromArgb(184, 222, 255);
             btnHover = Color.FromArgb(213, 238, 255);
             btnClose.FlatAppearance.BorderColor = Color.FromArgb(0, 255, 255, 255); //transparent
             btnDeployToProd.FlatAppearance.BorderColor = Color.FromArgb(0, 255, 255, 255); //transparent
-
+        }
+        private void SetAsStartup()
+        {
             Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
             key.SetValue("FolderWidget", @"C:\Projects\FolderWidget\FolderWidget\bin\Debug\FolderWidget.exe");
-
-            AddDeployToProdButton();
-
-            InitFormFilesAndButtons();
-            SetNotifyIconAndContextMenu();
-
-            ghk = new KeyHandler(Keys.F8, this);
-            ghk.Register();
         }
-
-
-
-        #region Form Display Handling
         private void AddDeployToProdButton()
         {
 
@@ -121,16 +143,6 @@ namespace FolderWidget
                 clsFileManager.WriteError(ex.Message, ex.StackTrace);
             }
         }
-
-        protected override void OnPaintBackground(PaintEventArgs e)
-        {
-
-            using (LinearGradientBrush brush = new LinearGradientBrush(this.ClientRectangle, backgroundA, backgroundB, 90F))
-            {
-                e.Graphics.FillRectangle(brush, this.ClientRectangle);
-            }
-        }
-
         private void ChangeTheme()
         {
 
@@ -146,8 +158,6 @@ namespace FolderWidget
                 btnDeployToProd.ForeColor = Color.Black;
                 btnDeployToProd.BackColor = Color.FromArgb(255, 204, 0);
                 btnHover = Color.FromArgb(112, 112, 112);
-
-
             }
             else
             {
@@ -180,6 +190,7 @@ namespace FolderWidget
             m_menuItemDarkTheme.Index = 1;
             m_menuItemDarkTheme.Text = "&Dark";
             m_menuItemDarkTheme.Click += M_menuItemDarkTheme_Click; ;
+            m_menuItemDarkTheme.Checked = true;
 
             m_menuItemExit.Index = 2;
             m_menuItemExit.Text = "E&xit";
@@ -193,42 +204,27 @@ namespace FolderWidget
             m_notifyIcon.Visible = true;
             m_notifyIcon.Click += M_notifyIcon_Click;
         }
-
         private void M_menuItemDarkTheme_Click(object sender, EventArgs e)
         {
             m_menuItemDarkTheme.Checked = m_menuItemDarkTheme.Checked == true ? false : true;
             ChangeTheme();
             InitFormFilesAndButtons();
         }
-
-        private void ClsManageComunication_OnSendMessage(string Message)
-        {
-            this.Invoke((Action)(() =>
-            {
-                ShowAgain();
-            }));
-
-        }
         private void M_notifyIcon_Click(object sender, EventArgs e)
         {
 
             Rectangle workingArea = Screen.GetWorkingArea(this); //bottom right screen
-            this.Location = new Point(workingArea.Right - Size.Width,
-                                      workingArea.Bottom - Size.Height);
-            //this.Location = new Point(Screen.PrimaryScreen.Bounds.Right - 300, Screen.PrimaryScreen.Bounds.Bottom -200);
+            this.Location = new Point(workingArea.Right - Size.Width, workingArea.Bottom - Size.Height);
             ShowAgain();
         }
-
         private void m_menuItemExit_Click(object sender, EventArgs e)
         {
             this.Close();
         }
-
         private void M_menuItemRefresh_Click(object sender, EventArgs e)
         {
             ShowAgain();
         }
-
         private void ShowAgain()
         {
             if (this.WindowState == FormWindowState.Minimized)
@@ -239,7 +235,6 @@ namespace FolderWidget
             this.Show();
             InitFormFilesAndButtons();
         }
-
         private void Btn_MouseLeave(object sender, EventArgs e)
         {
             ((Button)sender).BackColor = Color.Transparent;
@@ -268,18 +263,15 @@ namespace FolderWidget
             title = Path.GetFileNameWithoutExtension(paths);
             lblFileName.Text = title;
         }
-
-
         private void lblFileName_DoubleClick(object sender, EventArgs e)
         {
-            this.Location = new Point(Screen.PrimaryScreen.Bounds.Right - this.Width, Screen.PrimaryScreen.Bounds.Top + 30);
+            Rectangle workingArea = Screen.GetWorkingArea(this); //bottom right screen
+            this.Location = new Point(workingArea.Right - Size.Width, workingArea.Bottom - Size.Height);
         }
         #endregion
 
 
-
         #region Form Data Handling
-
         private void ClearData()
         {
             tblIcons.Controls.Clear();
@@ -363,8 +355,9 @@ namespace FolderWidget
             Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 10, 10));
             DoubleBuffered = true;
         }
-
         #endregion
+
+
         #region Make Button
         private Button MakeDynamicButton(DataRow dr)
         {
@@ -412,9 +405,6 @@ namespace FolderWidget
             #endregion
             return btn;
         }
-
-
-
         private void StartProcessAsDifferentUser(object sender, EventArgs e)
         {
             string line = ((sender as MenuItem).GetContextMenu()).SourceControl.Tag.ToString();
@@ -515,7 +505,6 @@ namespace FolderWidget
                 }
             }
         }
-
         private dynamic GetIcon(DataRow dr)
         {
             if (!string.IsNullOrEmpty(dr["Icon"].ToString()))
@@ -559,11 +548,88 @@ namespace FolderWidget
                 }
             }
             return icon;
-        }
+        }   
         #endregion
 
-        #region Mouse Clicks
 
+        #region Mouse Clicks
+        private void DragEnterForm(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.Copy;
+        }
+        private void DragDropForm(object sender, DragEventArgs e)
+        {
+            string[] fileList = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+            List<string> finalList = new List<string>();
+            foreach (string file in fileList)
+            {
+                string sourcePath = clsFileManager.GetShortcutTargetFile(file);
+                sourcePath = string.IsNullOrEmpty(Path.GetExtension(sourcePath)) ? file : sourcePath;
+                if (!string.IsNullOrEmpty(sourcePath))
+                {
+                    finalList.Add(sourcePath);
+                }
+                else
+                {
+                    finalList.Add(file);
+                }
+            }
+            string iconPath = string.Empty;
+            dynamic id = null;
+            if (fileList.Length == 1 && !clsFileManager.IsPathDirectory(fileList[0]))
+            {
+                Icon icon = null;
+                try
+                {
+                    icon = Icon.ExtractAssociatedIcon(fileList[0]);
+                }
+                catch (Exception ex)
+                {
+                    icon = this.Icon;
+                    clsFileManager.WriteError(ex.Message, ex.StackTrace);
+                }
+
+                id = clsFileManager.SaveIcon(ref m_iconsData, icon.ToBitmap());
+            }
+            string paths = String.Join(",", finalList);
+            if (id != null)
+            {
+                m_iconsData.Rows.Add(paths, id, "", "");
+            }
+            else
+            {
+                m_iconsData.Rows.Add(paths, "", "", "");
+            }
+            clsFileManager.ReplaceXMLFile(m_iconsData);
+            this.Invoke((Action)(() =>
+            {
+                InitFormFilesAndButtons();
+            }));
+
+        }
+        private void panel1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                ReleaseCapture();
+                SendMessage(Handle, Constants.WM_NCLBUTTONDOWN, Constants.HT_CAPTION, 0);
+            }
+        }
+        private void DeleteItem_Click(object sender, EventArgs e)
+        {
+            string lineToDelete = ((sender as MenuItem).GetContextMenu()).SourceControl.Tag.ToString();
+            var rowToDelete = (m_iconsData.AsEnumerable().Where(dr => dr.Field<string>("Path") == lineToDelete).FirstOrDefault()) as DataRow;
+            if (!string.IsNullOrEmpty(rowToDelete["Icon"].ToString()))
+            {
+                clsFileManager.DeleteIcon(rowToDelete["Icon"].ToString());
+            }
+            m_iconsData.Rows.Remove(rowToDelete);
+            clsFileManager.ReplaceXMLFile(m_iconsData);
+            this.Invoke((Action)(() =>
+            {
+                InitFormFilesAndButtons();
+            }));
+        }
         private void Btn_Click(object sender, EventArgs e)
         {
             switch (((MouseEventArgs)e).Button)
@@ -625,90 +691,11 @@ namespace FolderWidget
                     ((Button)sender).ContextMenu.Show(this, new Point(((MouseEventArgs)e).X, ((MouseEventArgs)e).Y));
                     break;
                 case MouseButtons.Middle:
-                    this.Location = new Point(Screen.PrimaryScreen.Bounds.Right - this.Width, Screen.PrimaryScreen.Bounds.Top + 30);
-                    break;
+                    Rectangle workingArea = Screen.GetWorkingArea(this); //bottom right screen
+                    this.Location = new Point(workingArea.Right - Size.Width, workingArea.Bottom - Size.Height); break;
                 default:
                     break;
             }
-        }
-
-
-        private void panel1_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                ReleaseCapture();
-                SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
-            }
-        }
-        private void DragDropForm(object sender, DragEventArgs e)
-        {
-            string[] fileList = (string[])e.Data.GetData(DataFormats.FileDrop, false);
-            List<string> finalList = new List<string>();
-            foreach (string file in fileList)
-            {
-                string sourcePath = clsFileManager.GetShortcutTargetFile(file);
-                sourcePath = string.IsNullOrEmpty(Path.GetExtension(sourcePath)) ? file : sourcePath;
-                if (!string.IsNullOrEmpty(sourcePath))
-                {
-                    finalList.Add(sourcePath);
-                }
-                else
-                {
-                    finalList.Add(file);
-                }
-            }
-            string iconPath = string.Empty;
-            dynamic id = null;
-            if (fileList.Length == 1 && !clsFileManager.IsPathDirectory(fileList[0]))
-            {
-                Icon icon = null;
-                try
-                {
-                    icon = Icon.ExtractAssociatedIcon(fileList[0]);
-                }
-                catch (Exception ex)
-                {
-                    icon = this.Icon;
-                    clsFileManager.WriteError(ex.Message, ex.StackTrace);
-                }
-
-                id = clsFileManager.SaveIcon(ref m_iconsData, icon.ToBitmap());
-            }
-            string paths = String.Join(",", finalList);
-            if (id != null)
-            {
-                m_iconsData.Rows.Add(paths, id, "", "");
-            }
-            else
-            {
-                m_iconsData.Rows.Add(paths, "", "", "");
-            }
-            clsFileManager.ReplaceXMLFile(m_iconsData);
-            this.Invoke((Action)(() =>
-            {
-                InitFormFilesAndButtons();
-            }));
-
-        }
-        private void DeleteItem_Click(object sender, EventArgs e)
-        {
-            string lineToDelete = ((sender as MenuItem).GetContextMenu()).SourceControl.Tag.ToString();
-            var rowToDelete = (m_iconsData.AsEnumerable().Where(dr => dr.Field<string>("Path") == lineToDelete).FirstOrDefault()) as DataRow;
-            if (!string.IsNullOrEmpty(rowToDelete["Icon"].ToString()))
-            {
-                clsFileManager.DeleteIcon(rowToDelete["Icon"].ToString());
-            }
-            m_iconsData.Rows.Remove(rowToDelete);
-            clsFileManager.ReplaceXMLFile(m_iconsData);
-            this.Invoke((Action)(() =>
-            {
-                InitFormFilesAndButtons();
-            }));
-        }
-        private void DragEnterForm(object sender, DragEventArgs e)
-        {
-            e.Effect = DragDropEffects.Copy;
         }
         private void btnDeployToProd_Click(object sender, EventArgs e)
         {
@@ -752,15 +739,18 @@ namespace FolderWidget
             }
             this.Visible = true;
         }
-
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+        }
         #endregion
+
 
         #region KeyHooksFunctions
         private void HandleHotkey()
         {
             this.Visible = !this.Visible;
         }
-
         protected override void WndProc(ref Message m)
         {
             if (m.Msg == Constants.WM_HOTKEY_MSG_ID)
@@ -769,10 +759,8 @@ namespace FolderWidget
         }
         #endregion
 
-        private void btnClose_Click(object sender, EventArgs e)
-        {
-            this.Hide();
-        }
+
+
     }
 
 }
