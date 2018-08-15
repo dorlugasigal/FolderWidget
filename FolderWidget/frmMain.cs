@@ -44,6 +44,7 @@ namespace FolderWidget
         private MenuItem m_menuItemExit;
         private MenuItem m_menuItemRefresh;
         private MenuItem m_menuItemDarkTheme;
+        private MenuItem m_menuItemTopMost;
 
         DataTable m_iconsData;
 
@@ -75,6 +76,7 @@ namespace FolderWidget
             InitFormFilesAndButtons();
             SetNotifyIconAndContextMenu();
             ChangeTheme();
+
         }
 
 
@@ -180,8 +182,10 @@ namespace FolderWidget
             this.m_menuItemExit = new MenuItem();
             this.m_menuItemRefresh = new MenuItem();
             this.m_menuItemDarkTheme = new MenuItem();
+            this.m_menuItemTopMost = new MenuItem();
 
-            this.ContextMenu.MenuItems.AddRange(new MenuItem[] { m_menuItemExit, m_menuItemRefresh, m_menuItemDarkTheme });
+
+            this.ContextMenu.MenuItems.AddRange(new MenuItem[] { m_menuItemExit, m_menuItemRefresh, m_menuItemDarkTheme, m_menuItemTopMost });
 
             m_menuItemRefresh.Index = 0;
             m_menuItemRefresh.Text = "&Refresh";
@@ -192,7 +196,12 @@ namespace FolderWidget
             m_menuItemDarkTheme.Click += M_menuItemDarkTheme_Click; ;
             m_menuItemDarkTheme.Checked = true;
 
-            m_menuItemExit.Index = 2;
+            m_menuItemTopMost.Index = 2;
+            m_menuItemTopMost.Text = "Always on &top";
+            m_menuItemTopMost.Click += M_menuItemTopMost_Click; ;
+            m_menuItemTopMost.Checked = false;
+
+            m_menuItemExit.Index = 3;
             m_menuItemExit.Text = "E&xit";
             m_menuItemExit.Click += m_menuItemExit_Click;
 
@@ -204,6 +213,14 @@ namespace FolderWidget
             m_notifyIcon.Visible = true;
             m_notifyIcon.Click += M_notifyIcon_Click;
         }
+
+        private void M_menuItemTopMost_Click(object sender, EventArgs e)
+        {
+            m_menuItemTopMost.Checked = m_menuItemTopMost.Checked == true ? false : true;
+            this.TopMost = m_menuItemTopMost.Checked;
+
+        }
+
         private void M_menuItemDarkTheme_Click(object sender, EventArgs e)
         {
             m_menuItemDarkTheme.Checked = m_menuItemDarkTheme.Checked == true ? false : true;
@@ -749,7 +766,17 @@ namespace FolderWidget
         #region KeyHooksFunctions
         private void HandleHotkey()
         {
-            this.Visible = !this.Visible;
+            //this.Visible = !this.Visible;
+            if (!Visible)
+            {
+                Show();
+            }
+            else
+            {
+                Hide();
+            }
+            this.TopMost = Visible;
+            m_menuItemTopMost.Checked = this.TopMost;
         }
         protected override void WndProc(ref Message m)
         {
