@@ -46,6 +46,9 @@ namespace FolderWidget
         private MenuItem m_menuItemDarkTheme;
         private MenuItem m_menuItemTopMost;
 
+        private MenuItem m_menuItemrunasAdmin;
+        private bool runasAdmin;
+
         DataTable m_iconsData;
 
         Color backgroundA;
@@ -183,9 +186,9 @@ namespace FolderWidget
             this.m_menuItemRefresh = new MenuItem();
             this.m_menuItemDarkTheme = new MenuItem();
             this.m_menuItemTopMost = new MenuItem();
+            this.m_menuItemrunasAdmin = new MenuItem();
 
-
-            this.ContextMenu.MenuItems.AddRange(new MenuItem[] { m_menuItemExit, m_menuItemRefresh, m_menuItemDarkTheme, m_menuItemTopMost });
+            this.ContextMenu.MenuItems.AddRange(new MenuItem[] { m_menuItemExit, m_menuItemRefresh, m_menuItemDarkTheme, m_menuItemTopMost, m_menuItemrunasAdmin });
 
             m_menuItemRefresh.Index = 0;
             m_menuItemRefresh.Text = "&Refresh";
@@ -201,7 +204,12 @@ namespace FolderWidget
             m_menuItemTopMost.Click += M_menuItemTopMost_Click; ;
             m_menuItemTopMost.Checked = false;
 
-            m_menuItemExit.Index = 3;
+            m_menuItemrunasAdmin.Index = 3;
+            m_menuItemrunasAdmin.Text = "Admin";
+            m_menuItemrunasAdmin.Click += M_menuItemrunasAdmin_Click; ;
+            m_menuItemrunasAdmin.Checked = false;
+
+            m_menuItemExit.Index = 4;
             m_menuItemExit.Text = "E&xit";
             m_menuItemExit.Click += m_menuItemExit_Click;
 
@@ -212,6 +220,12 @@ namespace FolderWidget
             m_notifyIcon.Text = "FolderWidget is still running";
             m_notifyIcon.Visible = true;
             m_notifyIcon.Click += M_notifyIcon_Click;
+        }
+
+        private void M_menuItemrunasAdmin_Click(object sender, EventArgs e)
+        {
+            m_menuItemrunasAdmin.Checked = m_menuItemrunasAdmin.Checked == true ? false : true;
+            this.runasAdmin = m_menuItemrunasAdmin.Checked;
         }
 
         private void M_menuItemTopMost_Click(object sender, EventArgs e)
@@ -565,7 +579,7 @@ namespace FolderWidget
                 }
             }
             return icon;
-        }   
+        }
         #endregion
 
 
@@ -690,7 +704,26 @@ namespace FolderWidget
                             }
                             else
                             {
-                                Process.Start(path);
+                                if (runasAdmin)
+                                {
+                                    ProcessStartInfo proc = new ProcessStartInfo();
+                                    proc.UseShellExecute = true;
+                                    proc.WorkingDirectory = Environment.CurrentDirectory;
+                                    proc.FileName = path;
+                                    proc.Verb = "runas";
+                                    try
+                                    {
+                                        Process.Start(proc);
+                                    }
+                                    catch
+                                    {
+                                        return;
+                                    }
+                                }
+                                else
+                                {
+                                    Process.Start(path);
+                                }
                             }
                         }
                         if (stopAndRefresh)
