@@ -426,6 +426,7 @@ namespace FolderWidget
             string strForToolTip = string.Empty;
             btn.BackgroundImage = GetIcon(dr);
             btn.BackgroundImageLayout = ImageLayout.Stretch;
+            btn.FlatAppearance.BorderColor = Color.FromArgb(0, 255, 255, 255); //transparent
 
             ToolTip tp = new ToolTip();
             foreach (var item in dr["Path"].ToString().Split(','))
@@ -713,7 +714,14 @@ namespace FolderWidget
                                     proc.Verb = "runas";
                                     try
                                     {
-                                        Process.Start(proc);
+                                        if (File.Exists(path))//file
+                                        {
+                                            Process.Start(proc);
+                                        }
+                                        else if (Directory.Exists(path))//directory
+                                        {
+                                            Process.Start(path);
+                                        }
                                     }
                                     catch
                                     {
