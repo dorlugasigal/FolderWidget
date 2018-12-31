@@ -1,6 +1,7 @@
-FolderWidget is a Desktop widget that stores a shortcut for you files and folders made in C# winforms
+# FolderWidget
+ FolderWidget is a Desktop widget that stores a shortcut for you files and folders made in C# winforms
 
-how to use?
+## how to use?
 
 open the application and drag a file, a folder or multiple files into the Widget
 
