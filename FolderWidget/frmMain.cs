@@ -66,6 +66,10 @@ namespace FolderWidget
             clsManageComunication.OnSendMessage += ClsManageComunication_OnSendMessage;
 
         }
+
+        /// <summary>
+        /// Set the initial window with all the icons and buttons and context menu
+        /// </summary>
         private void frmMain_Load(object sender, EventArgs e)
         {
             Rectangle workingArea = Screen.GetWorkingArea(this);
@@ -91,7 +95,10 @@ namespace FolderWidget
                 ShowAgain();
             }));
 
-        }
+        }        
+        /// <summary>
+        /// Paint the background with gradient color
+        /// </summary>
         protected override void OnPaintBackground(PaintEventArgs e)
         {
 
@@ -100,6 +107,9 @@ namespace FolderWidget
                 e.Graphics.FillRectangle(brush, this.ClientRectangle);
             }
         }
+        /// <summary>
+        /// Initialize colors set and borders
+        /// </summary>
         private void ColorsSet()
         {
             backgroundA = Color.FromArgb(227, 228, 230);
@@ -108,11 +118,17 @@ namespace FolderWidget
             btnClose.FlatAppearance.BorderColor = Color.FromArgb(0, 255, 255, 255); //transparent
             btnDeployToProd.FlatAppearance.BorderColor = Color.FromArgb(0, 255, 255, 255); //transparent
         }
+        /// <summary>
+        /// set the application as startup
+        /// </summary>
         private void SetAsStartup()
         {
             Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-            key.SetValue("FolderWidget", @"C:\Projects\FolderWidget\FolderWidget\bin\Debug\FolderWidget.exe");
+            key.SetValue("FolderWidget", System.Reflection.Assembly.GetExecutingAssembly().Location);
         }
+        /// <summary>
+        /// when having deployment access, another button would appear
+        /// </summary>
         private void AddDeployToProdButton()
         {
 
@@ -148,6 +164,9 @@ namespace FolderWidget
                 clsFileManager.WriteError(ex.Message, ex.StackTrace);
             }
         }
+        /// <summary>
+        /// Changing the theme
+        /// </summary>
         private void ChangeTheme()
         {
 
@@ -178,6 +197,9 @@ namespace FolderWidget
                 btnDeployToProd.ForeColor = Color.White;
             }
         }
+        /// <summary>
+        /// Initialize context menu for application
+        /// </summary>
         private void SetNotifyIconAndContextMenu()
         {
             this.components = new Container();
@@ -221,13 +243,14 @@ namespace FolderWidget
             m_notifyIcon.Visible = true;
             m_notifyIcon.Click += M_notifyIcon_Click;
         }
-
         private void M_menuItemrunasAdmin_Click(object sender, EventArgs e)
         {
             m_menuItemrunasAdmin.Checked = m_menuItemrunasAdmin.Checked == true ? false : true;
             this.runasAdmin = m_menuItemrunasAdmin.Checked;
         }
-
+        /// <summary>
+        /// toggles always on top
+        /// </summary>
         private void M_menuItemTopMost_Click(object sender, EventArgs e)
         {
             m_menuItemTopMost.Checked = m_menuItemTopMost.Checked == true ? false : true;
@@ -235,12 +258,18 @@ namespace FolderWidget
 
         }
 
+        /// <summary>
+        /// toggle Dark theme
+        /// </summary>
         private void M_menuItemDarkTheme_Click(object sender, EventArgs e)
         {
             m_menuItemDarkTheme.Checked = m_menuItemDarkTheme.Checked == true ? false : true;
             ChangeTheme();
             InitFormFilesAndButtons();
         }
+        /// <summary>
+        /// reset form location when clicking on notify icon
+        /// </summary>
         private void M_notifyIcon_Click(object sender, EventArgs e)
         {
 
@@ -248,14 +277,26 @@ namespace FolderWidget
             this.Location = new Point(workingArea.Right - Size.Width, workingArea.Bottom - Size.Height);
             ShowAgain();
         }
+
+        /// <summary>
+        /// Exit
+        /// </summary>
         private void m_menuItemExit_Click(object sender, EventArgs e)
         {
             this.Close();
         }
+
+        /// <summary>
+        ///  Refresh data
+        /// </summary>
         private void M_menuItemRefresh_Click(object sender, EventArgs e)
         {
             ShowAgain();
         }
+
+        /// <summary>
+        /// Refresh viw and icons
+        /// </summary>
         private void ShowAgain()
         {
             if (this.WindowState == FormWindowState.Minimized)
@@ -266,6 +307,10 @@ namespace FolderWidget
             this.Show();
             InitFormFilesAndButtons();
         }
+
+        /// <summary>
+        /// leaving a button will reset the text in the above panel
+        /// </summary>
         private void Btn_MouseLeave(object sender, EventArgs e)
         {
             ((Button)sender).BackColor = Color.Transparent;
@@ -275,6 +320,10 @@ namespace FolderWidget
                 lblFileName.Text = string.Empty;
             }
         }
+
+        /// <summary>
+        /// hovering a button would show data on the items
+        /// </summary>
         private void Btn_MouseHover(object sender, EventArgs e)
         {
             ((Button)sender).BackColor = btnHover;
@@ -294,6 +343,10 @@ namespace FolderWidget
             title = Path.GetFileNameWithoutExtension(paths);
             lblFileName.Text = title;
         }
+
+        /// <summary>
+        /// reset location when clicking panel
+        /// </summary>
         private void lblFileName_DoubleClick(object sender, EventArgs e)
         {
             Rectangle workingArea = Screen.GetWorkingArea(this); //bottom right screen
@@ -303,6 +356,10 @@ namespace FolderWidget
 
 
         #region Form Data Handling
+
+        /// <summary>
+        /// reset data
+        /// </summary>
         private void ClearData()
         {
             tblIcons.Controls.Clear();
@@ -310,16 +367,27 @@ namespace FolderWidget
             GC.Collect();
             GC.WaitForPendingFinalizers();
         }
+
+        /// <summary>
+        /// Add icons, and set dynamic form size
+        /// </summary>
         private void InitFormFilesAndButtons()
         {
             ClearData();
             m_iconsData = clsFileManager.GetInitData();
 
             this.Height = m_height + (50 * ((int)m_iconsData.Rows.Count / 3));
+            tblIcons.RowCount = (m_iconsData.Rows.Count / 3) + 1;
+
+            if (m_iconsData.Rows.Count % 3 == 0)
+            {
+                this.Height = this.Height - 50;
+                tblIcons.RowCount--;
+            }
+
             this.Size = new Size(this.Width, this.Height);
             this.FormBorderStyle = FormBorderStyle.None;
 
-            tblIcons.RowCount = (m_iconsData.Rows.Count / 3) + 1;
             tblIcons.Dock = DockStyle.Fill;
             for (int i = 0; i < tblIcons.RowCount; i++)
             {
@@ -390,6 +458,10 @@ namespace FolderWidget
 
 
         #region Make Button
+
+        /// <summary>
+        /// initilize a button icon, events properties and context menu
+        /// </summary>
         private Button MakeDynamicButton(DataRow dr)
         {
             Button btn = new Button();
@@ -437,6 +509,10 @@ namespace FolderWidget
             #endregion
             return btn;
         }
+
+        /// <summary>
+        /// start item as a different user
+        /// </summary>
         private void StartProcessAsDifferentUser(object sender, EventArgs e)
         {
             string line = ((sender as MenuItem).GetContextMenu()).SourceControl.Tag.ToString();
@@ -507,6 +583,11 @@ namespace FolderWidget
                 }
             }
         }
+
+        /// <summary>
+        /// Changing the icon to specific image file
+        /// saves it in the main xml file
+        /// </summary>
         private void ChangeIcon_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog dlg = new OpenFileDialog())
@@ -537,6 +618,13 @@ namespace FolderWidget
                 }
             }
         }
+
+
+        /// <summary>
+        /// Get the icon of the currently added item, 
+        /// if possible to extract ICO or PNG file then it will use it
+        /// if not, deafult icon would set by the item extension
+        /// </summary>
         private dynamic GetIcon(DataRow dr)
         {
             if (!string.IsNullOrEmpty(dr["Icon"].ToString()))
@@ -755,6 +843,11 @@ namespace FolderWidget
                     break;
             }
         }
+
+        /// <summary>
+        /// Deploying algorithm:
+        /// copies from QA to PROD
+        /// </summary>
         private void btnDeployToProd_Click(object sender, EventArgs e)
         {
             List<string> files = Directory.EnumerateFiles(ConfigurationManager.AppSettings["deployToQAPath"], "*.*", SearchOption.AllDirectories)
@@ -805,6 +898,11 @@ namespace FolderWidget
 
 
         #region KeyHooksFunctions
+
+        /// <summary>
+        /// toggles form visibility , and always on top prop
+        /// when pressing F8 button
+        /// </summary>
         private void HandleHotkey()
         {
             //this.Visible = !this.Visible;
@@ -819,6 +917,10 @@ namespace FolderWidget
             this.TopMost = Visible;
             m_menuItemTopMost.Checked = this.TopMost;
         }
+
+        /// <summary>
+        /// Handles F8 clicks
+        /// </summary>
         protected override void WndProc(ref Message m)
         {
             if (m.Msg == Constants.WM_HOTKEY_MSG_ID)
