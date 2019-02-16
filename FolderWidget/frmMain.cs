@@ -73,7 +73,6 @@ namespace FolderWidget
         private void frmMain_Load(object sender, EventArgs e)
         {
             Rectangle workingArea = Screen.GetWorkingArea(this);
-            this.Location = new Point(workingArea.Right - Size.Width, workingArea.Bottom - Size.Height);
             ghk = new KeyHandler(Keys.F8, this);
             ghk.Register();
 
@@ -83,7 +82,7 @@ namespace FolderWidget
             InitFormFilesAndButtons();
             SetNotifyIconAndContextMenu();
             ChangeTheme();
-
+            this.Location = new Point(workingArea.Right - Size.Width, workingArea.Bottom - Size.Height);
         }
 
 
