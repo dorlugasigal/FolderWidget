@@ -26,7 +26,9 @@ each icon you add has its own context menu by right clicking it:
 ![](https://i.imgur.com/m1H4njb.png)
 
 item name is shown on the top panel of the widget when hovering with the mouse
+
 in case there are multiple files it would show [2 files]
+
 a tool tip will appear too with the files full name and destination
 
 
